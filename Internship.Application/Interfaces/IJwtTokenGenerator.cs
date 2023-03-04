@@ -1,7 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
-namespace Judemy.Api.Services
+namespace Internship.Persistence.Repositories
 {
 	public interface IJwtTokenGenerator
 	{

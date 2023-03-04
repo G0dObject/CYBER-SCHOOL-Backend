@@ -4,27 +4,31 @@ namespace Internship.Domain.Identity
 {
 	public class User : IdentityUser<int>
 	{
+		private Directions direction;
+		private Education education;
+		private Region desiredRegion;
 
-
-		public User(string city, int age, bool maried, bool haveChild, Directions direction, Purpose purpose, Region desiredRegion, Education education)
+		public User(string fullName, DateTime dayOfBird, string city, Directions direction, string adress, Education education, bool maried, bool haveChild, Region desiredRegion)
 		{
+			FullName = fullName;
+			DayOfBird = dayOfBird;
 			City = city;
-			Age = age;
+			Direction = direction;
+			Adress = adress;
+			Education = education;
 			Maried = maried;
 			HaveChild = haveChild;
-			Direction = direction;
-			Purpose = purpose;
 			DesiredRegion = desiredRegion;
-			Education = education;
 		}
 
+		public string FullName { get; set; }
+		public DateTime DayOfBird { get; set; }
 		public string City { get; set; }
-		public int Age { get; set; }
+		public Directions Direction { get; set; }
+		public string Adress { get; set; }
+		public Education Education { get; set; }
 		public bool Maried { get; set; }
 		public bool HaveChild { get; set; }
-		public Directions Direction { get; set; }
-		public Purpose Purpose { get; set; }
 		public Region DesiredRegion { get; set; }
-		public Education Education { get; set; }
 	}
 }

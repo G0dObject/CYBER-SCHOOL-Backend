@@ -13,11 +13,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Internship.Persistence", "I
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Internship.Domain", "Internship.Domain\Internship.Domain.csproj", "{A9615983-C07F-42FD-84D4-9088EB99EDCE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Internship.Application", "Internship.Application\Internship.Application.csproj", "{1AFB7AA1-C6AD-40BA-B261-21B85D233B1C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Internship.Application", "Internship.Application\Internship.Application.csproj", "{1AFB7AA1-C6AD-40BA-B261-21B85D233B1C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Internship.Api", "Internship.Api\Internship.Api.csproj", "{D35817CF-049A-488E-A97B-F32BA2A7D62A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Internship.Api", "Internship.Api\Internship.Api.csproj", "{D35817CF-049A-488E-A97B-F32BA2A7D62A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Internship.DependencyInjection", "Internship.DependencyInjection\Internship.DependencyInjection.csproj", "{D1F34FC7-0F4F-45AC-A498-BD83F9C764F5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Internship.DependencyInjection", "Internship.DependencyInjection\Internship.DependencyInjection.csproj", "{D1F34FC7-0F4F-45AC-A498-BD83F9C764F5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F8C73A91-C097-4F6C-8BBB-06920AD073CB}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

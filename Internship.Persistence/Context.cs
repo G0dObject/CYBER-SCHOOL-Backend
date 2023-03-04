@@ -3,6 +3,7 @@ using Internship.Domain.Enitity;
 using Internship.Domain.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace Internship.Persistence
 {
@@ -16,6 +17,7 @@ namespace Internship.Persistence
 		}
 
 		public DbSet<Vacancy> Vacancies { get; set; }
+		DatabaseFacade IContext.Database { get; set; }
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{

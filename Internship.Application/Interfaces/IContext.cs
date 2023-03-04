@@ -1,5 +1,6 @@
 ﻿using Internship.Domain.Enitity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace Internship.Application.Interfaces
 {
@@ -9,6 +10,7 @@ namespace Internship.Application.Interfaces
 
 		public Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 		public void Dispose();
+		public DatabaseFacade Database { get; set; }
 
 	}
 }

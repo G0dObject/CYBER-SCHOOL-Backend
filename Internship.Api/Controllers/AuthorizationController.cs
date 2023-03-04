@@ -1,5 +1,8 @@
-﻿using Internship.Domain.Identity;
-using Judemy.Api.Services;
+﻿using CodeBits;
+using Internship.Api.Services;
+using Internship.Application.Common.Dto;
+using Internship.Domain.Identity;
+using Internship.Persistence.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -18,46 +21,61 @@ namespace Internship.Api.Controllers
 		private readonly IJwtTokenGenerator _jwtTokenGenerator;
 		private readonly RoleManager<Role> _roleManager;
 
+
 		public LoginController(UserManager<User> userManager, IJwtTokenGenerator jwtTokenGenerator, RoleManager<Role> roleManager)
 		{
 			_userManager = userManager;
 			_jwtTokenGenerator = jwtTokenGenerator;
 			_roleManager = roleManager;
 
+
 		}
 		[Authorize]
 		[HttpGet]
-		public string GetSecret() => "Ok";
+		public string GetSecret()
+		{
+			return "Secret";
+		}
+		[HttpPost]
+		[Route("Login")]
+		public async Task<IActionResult> Login([FromBody] LoginUser model)
+		{
+			User? user = await _userManager.FindByNameAsync(model.Login);
 
-		//[HttpPost]
-		//[Route("Login")]
-		//public async Task<IActionResult> Login([FromBody] LoginUser model)
-		//{
-		//	User? user = await _userManager.FindByEmailAsync(model.Email);
+			if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
+			{
+				IList<string> userRoles = await _userManager.GetRolesAsync(user);
 
-		//	if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
-		//	{
-		//		IList<string> userRoles = await _userManager.GetRolesAsync(user);
+				List<Claim> authClaims = new()
+				{
+					new Claim(ClaimsIdentity.DefaultNameClaimType, user.UserName)
+				};
 
-		//		List<Claim> authClaims = new()
-		//		{
-		//			new Claim(ClaimsIdentity.DefaultNameClaimType, user.UserName)
-		//		};
+				foreach (string? userRole in userRoles)
+				{
+					authClaims.Add(new Claim(ClaimTypes.Role, userRole));
+				}
+				JwtSecurityToken? token = _jwtTokenGenerator.GenerateJwtToken(authClaims);
 
-		//		foreach (string? userRole in userRoles)
-		//		{
-		//			authClaims.Add(new Claim(ClaimTypes.Role, userRole));
-		//		}
-		//		JwtSecurityToken? token = _jwtTokenGenerator.GenerateJwtToken(authClaims);
+				return Ok(new
+				{
+					username = user.UserName,
+					token = new JwtSecurityTokenHandler().WriteToken(token),
+				});
+			}
+			return Unauthorized();
+		}
 
-		//		return Ok(new
-		//		{
-		//			username = user.UserName,
-		//			token = new JwtSecurityTokenHandler().WriteToken(token),
-		//		});
-		//	}
-		//	return Unauthorized();
-		//}
+		[HttpPost]
+		[Route("SetAdmin")]
+		public async Task<IActionResult> SetAdmin(int id)
+		{
+			IdentityResult g = await _roleManager.CreateAsync(new Role() { Name = "Admin" });
+			IdentityResult c = await _userManager.AddToRoleAsync(await _userManager.FindByIdAsync(id.ToString()), "Admin");
+			return Ok(c);
+		}
+
+
 		[HttpPost]
 		[Route("Register")]
 		public async Task<IActionResult> Register(CreateUser model)
@@ -66,16 +84,31 @@ namespace Internship.Api.Controllers
 			if (userExists != null)
 				return StatusCode(StatusCodes.Status409Conflict, "Alredy exist");
 
-			User user = new(model.City, model.Age, model.Maried, model.HaveChild, model.Direction, model.Purpose, model.DesiredRegion, model.Education)
+
+			string FullName = model.FirstName + " " + model.LastName + " " + model.Surname;
+			User user = new(
+					fullName: FullName,
+					dayOfBird: model.DayOfBird.Date,
+					city: model.City,
+					direction: model.Direction,
+					adress: model.Adress,
+					education: model.Education,
+					maried: model.Maried,
+					haveChild: model.HaveChild,
+					desiredRegion: model.DesiredRegion
+				   )
 			{
 				Email = model.Email,
 				SecurityStamp = Guid.NewGuid().ToString(),
-				UserName = "ssdgsgdsgdsgd"
+				UserName = PasswordGenerator.Generate(10, PasswordCharacters.AllLetters | PasswordCharacters.Numbers, new char[] { ' ' })
 			};
-			string g = CodeBits.PasswordGenerator.Generate(10);
-			IdentityResult result = await _userManager.CreateAsync(user, g);
+			string password = PasswordGenerator.Generate(10, PasswordCharacters.AllLetters | PasswordCharacters.Numbers, new char[] { ' ' });
+			IdentityResult result = await _userManager.CreateAsync(user, password);
 
-			return Ok();
+			var response = new { Login = user.UserName, Password = password };
+			return result.Succeeded
+				? StatusCode(StatusCodes.Status201Created, response) :
+				StatusCode(StatusCodes.Status400BadRequest, "Create Failed");
 		}
 	}
 }

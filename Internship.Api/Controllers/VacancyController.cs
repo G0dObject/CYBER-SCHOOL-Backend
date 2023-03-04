@@ -1,11 +1,7 @@
-﻿using Internship.Application.Interfaces;
-using Internship.Domain.Enitity;
-using Internship.Persistence;
+﻿using Internship.Domain.Enitity;
 using Internship.Persistence.Repositories;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
 
 namespace Internship.Api.Controllers
 {
@@ -13,31 +9,31 @@ namespace Internship.Api.Controllers
 	[ApiController]
 	public class VacancyController : ControllerBase
 	{
-
-		private IContext _context;
 		private IUnitOfWork _unitOfWork;
 
-
-		public VacancyController(IContext context, IUnitOfWork unitOfWork)
+		public VacancyController(IUnitOfWork unitOfWork)
 		{
-			_context = context;
 			_unitOfWork = unitOfWork;
 		}
 
 		[HttpGet("{id?}")]
-		[Authorize(Policy = "admin_p")]
-		public async Task<Vacancy> Get(int id) => await _unitOfWork.Vacancy.GetByIdAsync(id) ?? throw new NullReferenceException();
+		public async Task<Vacancy> Get(int id) => await _unitOfWork.Vacancy.GetByIdAsync(id) ?? throw new Exception($"sequence not contains vacancy with id:{id}");
 		[HttpGet]
-		[Authorize(Policy = "admin_p")]
 		public async Task<List<Vacancy>> Get() => await _unitOfWork.Vacancy.GetAllAsync();
 
+		[Authorize(Policy = "admin_p")]
 		[HttpPost]
+		[Authorize("admin_p")]
 		public async Task Create(Vacancy vacancy) => await _unitOfWork!.Vacancy!.CreateAsync(vacancy);
 
+		[Authorize(Policy = "admin_p")]
 		[HttpDelete]
+		[Authorize("admin_p")]
 		public async Task Delete(int id) => await _unitOfWork.Vacancy.Delete(id);
 
+		[Authorize(Policy = "admin_p")]
 		[HttpPut]
+		[Authorize("admin_p")]
 		public async Task Update(Vacancy vacancy) => await _unitOfWork.Vacancy.UpdateAsync(vacancy);
 
 	}
