@@ -4,10 +4,6 @@ namespace Internship.Domain.Identity
 {
 	public class User : IdentityUser<int>
 	{
-		private Directions direction;
-		private Education education;
-		private Region desiredRegion;
-
 		public User(string fullName, DateTime dayOfBird, string city, Directions direction, string adress, Education education, bool maried, bool haveChild, Region desiredRegion)
 		{
 			FullName = fullName;
@@ -20,7 +16,7 @@ namespace Internship.Domain.Identity
 			HaveChild = haveChild;
 			DesiredRegion = desiredRegion;
 		}
-
+		public string? ImageLocation { get; set; }
 		public string FullName { get; set; }
 		public DateTime DayOfBird { get; set; }
 		public string City { get; set; }

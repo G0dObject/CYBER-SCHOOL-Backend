@@ -1,5 +1,6 @@
 using Internship.Api.Services;
 using Internship.Api.Services.Identity;
+using Internship.Api.Services.Images;
 using Internship.Application.Interfaces;
 using Internship.DependencyInjection;
 using Internship.Persistence;
@@ -28,26 +29,26 @@ namespace Internship.Api
 			_ = builder.Services.AddAuthorization();
 			_ = builder.Services.AddAuthorizationBuilder().AddPolicy("admin_p", policy => policy.RequireRole("Admin"));
 
+			_ = builder.Services.AddCors(options => options.AddPolicy(name: "local", p => p.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod()));
 
 			_ = builder.Services.AddDbContext<IContext, Context>();
 			_ = builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
 			_ = builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+			_ = builder.Services.AddScoped<ImageService>();
 
 			WebApplication app = builder.Build();
 
 
-			if (app.Environment.IsDevelopment())
-			{
-				_ = app.UseSwagger();
-				_ = app.UseSwaggerUI();
-			}
+			_ = app.UseSwagger();
+			_ = app.UseSwaggerUI();
 
 			_ = app.UseHttpsRedirection();
 			_ = app.UseAuthentication();
 			_ = app.UseAuthorization();
 
 			_ = app.MapControllers();
-
+			_ = app.UseCors("local");
 			await Rolles.AddRoles(app.Services, new[] { "Admin", "User", "Manager" });
 			_ = app.MapGet("/", () => "Work").AllowAnonymous();
 			_ = app.MapPost("/drop", (Context context) => context.Database.EnsureDeleted());

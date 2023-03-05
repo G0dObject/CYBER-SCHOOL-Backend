@@ -48,7 +48,8 @@ namespace Internship.Api.Controllers
 
 				List<Claim> authClaims = new()
 				{
-					new Claim(ClaimsIdentity.DefaultNameClaimType, user.UserName)
+					new Claim(ClaimsIdentity.DefaultNameClaimType, user.UserName),
+					new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
 				};
 
 				foreach (string? userRole in userRoles)
@@ -75,7 +76,6 @@ namespace Internship.Api.Controllers
 			return Ok(c);
 		}
 
-
 		[HttpPost]
 		[Route("Register")]
 		public async Task<IActionResult> Register(CreateUser model)
@@ -88,7 +88,7 @@ namespace Internship.Api.Controllers
 			string FullName = model.FirstName + " " + model.LastName + " " + model.Surname;
 			User user = new(
 					fullName: FullName,
-					dayOfBird: model.DayOfBird.Date,
+					dayOfBird: model.DayOfBird,
 					city: model.City,
 					direction: model.Direction,
 					adress: model.Adress,
