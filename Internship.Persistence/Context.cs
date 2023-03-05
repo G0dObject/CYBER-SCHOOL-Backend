@@ -16,6 +16,7 @@ namespace Internship.Persistence
 
 		}
 
+
 		public DbSet<Vacancy> Vacancies { get; set; }
 		DatabaseFacade IContext.Database { get; set; }
 

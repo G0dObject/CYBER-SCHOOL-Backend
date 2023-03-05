@@ -1,11 +1,13 @@
 ﻿using CodeBits;
 using Internship.Api.Services;
 using Internship.Application.Common.Dto;
+using Internship.Application.Interfaces;
 using Internship.Domain.Identity;
 using Internship.Persistence.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -17,24 +19,25 @@ namespace Internship.Api.Controllers
 	[ApiController]
 	public class LoginController : ControllerBase
 	{
+		private readonly IContext _context;
 		private readonly UserManager<User> _userManager;
 		private readonly IJwtTokenGenerator _jwtTokenGenerator;
 		private readonly RoleManager<Role> _roleManager;
 
 
-		public LoginController(UserManager<User> userManager, IJwtTokenGenerator jwtTokenGenerator, RoleManager<Role> roleManager)
+		public LoginController(UserManager<User> userManager, IJwtTokenGenerator jwtTokenGenerator, RoleManager<Role> roleManager, IContext context)
 		{
+			_context = context;
 			_userManager = userManager;
 			_jwtTokenGenerator = jwtTokenGenerator;
 			_roleManager = roleManager;
-
-
 		}
 		[Authorize]
 		[HttpGet]
-		public string GetSecret()
+		[Authorize(Policy = "admin_p")]
+		public async Task<List<User>> GetAllUser()
 		{
-			return "Secret";
+			return await _context.Users.ToListAsync();
 		}
 		[HttpPost]
 		[Route("Login")]

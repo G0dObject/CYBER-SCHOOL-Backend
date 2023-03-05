@@ -29,7 +29,7 @@ namespace Internship.Api
 			_ = builder.Services.AddAuthorization();
 			_ = builder.Services.AddAuthorizationBuilder().AddPolicy("admin_p", policy => policy.RequireRole("Admin"));
 
-			_ = builder.Services.AddCors(options => options.AddPolicy(name: "local", p => p.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod()));
+			_ = builder.Services.AddCors(options => options.AddDefaultPolicy(p => p.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
 
 			_ = builder.Services.AddDbContext<IContext, Context>();
 			_ = builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -39,7 +39,7 @@ namespace Internship.Api
 
 			WebApplication app = builder.Build();
 
-
+			_ = app.UseCors();
 			_ = app.UseSwagger();
 			_ = app.UseSwaggerUI();
 
@@ -48,7 +48,7 @@ namespace Internship.Api
 			_ = app.UseAuthorization();
 
 			_ = app.MapControllers();
-			_ = app.UseCors("local");
+
 			await Rolles.AddRoles(app.Services, new[] { "Admin", "User", "Manager" });
 			_ = app.MapGet("/", () => "Work").AllowAnonymous();
 			_ = app.MapPost("/drop", (Context context) => context.Database.EnsureDeleted());
